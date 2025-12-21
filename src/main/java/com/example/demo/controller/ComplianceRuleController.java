@@ -2,32 +2,36 @@ package com.example.demo.controller;
 
 import com.example.demo.model.ComplianceRule;
 import com.example.demo.service.ComplianceRuleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/compliance-rules")
 public class ComplianceRuleController {
-
-    private final ComplianceRuleService service;
-
-    public ComplianceRuleController(ComplianceRuleService service) {
-        this.service = service;
-    }
-
+    
+    @Autowired
+    private ComplianceRuleService complianceRuleService;
+    
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
-    public ComplianceRule create(@RequestBody ComplianceRule rule) {
-        return service.create(rule);
+    public ResponseEntity<ComplianceRule> createRule(@RequestBody ComplianceRule rule) {
+        ComplianceRule created = complianceRuleService.createRule(rule);
+        return ResponseEntity.ok(created);
     }
-
+    
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public List<ComplianceRule> getAll() {
-        return service.getAll();
+    public ResponseEntity<List<ComplianceRule>> getAllRules() {
+        return ResponseEntity.ok(complianceRuleService.getAllRules());
     }
-
+    
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ComplianceRule get(@PathVariable Long id) {
-        return service.get(id);
+    public ResponseEntity<ComplianceRule> getRule(@PathVariable Long id) {
+        ComplianceRule rule = complianceRuleService.getRule(id);
+        return ResponseEntity.ok(rule);
     }
 }
