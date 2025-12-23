@@ -1,30 +1,34 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.ComplianceRule;
 import com.example.demo.repository.ComplianceRuleRepository;
 import com.example.demo.service.ComplianceRuleService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class ComplianceRuleServiceImpl implements ComplianceRuleService {
-
-    private final ComplianceRuleRepository repo;
-
-    public ComplianceRuleServiceImpl(ComplianceRuleRepository repo) {
-        this.repo = repo;
+    
+    private final ComplianceRuleRepository complianceRuleRepository;
+    
+    public ComplianceRuleServiceImpl(ComplianceRuleRepository complianceRuleRepository) {
+        this.complianceRuleRepository = complianceRuleRepository;
     }
-
-    public ComplianceRule create(ComplianceRule rule) {
-        return repo.save(rule);
+    
+    @Override
+    public ComplianceRule createRule(ComplianceRule rule) {
+        return complianceRuleRepository.save(rule);
     }
-
-    public List<ComplianceRule> getAll() {
-        return repo.findAll();
+    
+    @Override
+    public List<ComplianceRule> getAllRules() {
+        return complianceRuleRepository.findAll();
     }
-
-    public ComplianceRule get(Long id) {
-        return repo.findById(id).orElseThrow();
+    
+    @Override
+    public ComplianceRule getRule(Long id) {
+        return complianceRuleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ComplianceRule not found"));
     }
 }
