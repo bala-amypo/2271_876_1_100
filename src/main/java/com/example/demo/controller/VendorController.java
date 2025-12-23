@@ -18,7 +18,6 @@ public class VendorController {
         this.vendorService = vendorService;
     }
 
-    // POST – Create vendor
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
@@ -26,14 +25,12 @@ public class VendorController {
         return ResponseEntity.ok(savedVendor);
     }
 
-    // GET – List all vendors
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<Vendor>> getAllVendors() {
         return ResponseEntity.ok(vendorService.getAllVendors());
     }
 
-    // GET – Get vendor by ID
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<Vendor> getVendorById(@PathVariable Long id) {
