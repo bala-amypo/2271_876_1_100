@@ -15,7 +15,7 @@ public interface VendorDocumentRepository
 
     List<VendorDocument> findByVendor(Vendor vendor);
 
-    // ✅ REQUIRED BY TESTS (EXACT SIGNATURE)
-    @Query("select d from VendorDocument d where d.expiryDate < :cutoffDate")
+    // ✅ EXACT METHOD REQUIRED BY TEST (LINE 329)
+    @Query("select vd from VendorDocument vd where vd.expiryDate < :cutoffDate")
     List<VendorDocument> findExpiredDocuments(LocalDate cutoffDate);
 }
