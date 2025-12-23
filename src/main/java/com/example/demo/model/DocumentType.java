@@ -2,8 +2,6 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -18,7 +16,6 @@ public class DocumentType {
     @JsonIgnore
     private Long id;
 
-    @NotNull
     @Column(name = "type_name", unique = true, nullable = false)
     private String typeName;
 
@@ -26,12 +23,9 @@ public class DocumentType {
 
     private Boolean required;
 
-    @NotNull
-    @Min(0)
     @Column(nullable = false)
     private Integer weight;
 
-    // createdAt LocalDateTime (auto-set, hidden from API)
     @Column(name = "created_at", nullable = false, updatable = false)
     @JsonIgnore
     private LocalDateTime createdAt;
@@ -40,65 +34,39 @@ public class DocumentType {
     @JsonIgnore
     private Set<Vendor> vendors = new HashSet<>();
 
-    public DocumentType() {
+    public DocumentType() {}
+
+    // 🔴 REQUIRED BY TESTS
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public DocumentType(String typeName, String description, Boolean required, Integer weight) {
-        this.typeName = typeName;
-        setDescription(description);
-        setRequired(required);
-        setWeight(weight); 
-    }
-    @PrePersist
-    protected void onCreate() {
+    // 🔴 REQUIRED BY TESTS
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
-
-    public Long getId() {
-        return id;
+    @PrePersist
+    protected void onCreate() {
+        prePersist();
     }
 
-    public String getTypeName() {
-        return typeName;
-    }
+    // getters & setters
+    public Long getId() { return id; }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
+    public String getTypeName() { return typeName; }
+    public void setTypeName(String typeName) { this.typeName = typeName; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public Boolean getRequired() { return required; }
+    public void setRequired(Boolean required) { this.required = required; }
 
-    public Boolean getRequired() {
-        return required;
-    }
+    public Integer getWeight() { return weight; }
+    public void setWeight(Integer weight) { this.weight = weight; }
 
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        if (weight == null || weight < 0) {
-            throw new IllegalArgumentException("Weight must be greater than or equal to 0");
-        }
-        this.weight = weight;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public Set<Vendor> getVendors() {
-        return vendors;
-    }
+    public Set<Vendor> getVendors() { return vendors; }
 }

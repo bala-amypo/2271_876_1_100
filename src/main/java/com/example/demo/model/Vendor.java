@@ -37,7 +37,6 @@ public class Vendor {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    // 🔥 CRITICAL FIX — hide relation from JSON
     @ManyToMany
     @JoinTable(
         name = "vendor_document_types",
@@ -49,64 +48,37 @@ public class Vendor {
 
     public Vendor() {}
 
-    public Vendor(
-            String vendorName,
-            String email,
-            String phone,
-            String industry) {
+    // 🔴 REQUIRED BY TESTS
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        this.vendorName = vendorName;
-        this.email = email;
-        this.phone = phone;
-        this.industry = industry;
+    // 🔴 REQUIRED BY TESTS
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        prePersist();
     }
 
-    // -------- getters & setters --------
+    // getters & setters
+    public Long getId() { return id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getVendorName() { return vendorName; }
+    public void setVendorName(String vendorName) { this.vendorName = vendorName; }
 
-    public String getVendorName() {
-        return vendorName;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setVendorName(String vendorName) {
-        this.vendorName = vendorName;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getIndustry() { return industry; }
+    public void setIndustry(String industry) { this.industry = industry; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getIndustry() {
-        return industry;
-    }
-
-    public void setIndustry(String industry) {
-        this.industry = industry;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
     public Set<DocumentType> getSupportedDocumentTypes() {
         return supportedDocumentTypes;

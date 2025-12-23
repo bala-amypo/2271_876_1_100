@@ -39,24 +39,25 @@ public class VendorDocument {
 
     public VendorDocument() {}
 
-    public VendorDocument(
-            Vendor vendor,
-            DocumentType documentType,
-            String fileUrl,
-            LocalDate expiryDate,
-            Boolean isValid) {
+    // 🔴 REQUIRED BY TESTS
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-        this.vendor = vendor;
-        this.documentType = documentType;
-        this.fileUrl = fileUrl;
-        this.expiryDate = expiryDate;
+    // 🔴 REQUIRED BY TESTS
+    public void setIsValid(Boolean isValid) {
         this.isValid = isValid;
+    }
+
+    // 🔴 REQUIRED BY TESTS
+    public void prePersist() {
+        this.uploadedAt = LocalDateTime.now();
+        updateValidityStatus();
     }
 
     @PrePersist
     protected void onCreate() {
-        this.uploadedAt = LocalDateTime.now();
-        updateValidityStatus();
+        prePersist();
     }
 
     private void updateValidityStatus() {
@@ -67,50 +68,25 @@ public class VendorDocument {
         }
     }
 
-    // -------- getters & setters --------
+    // getters & setters
+    public Long getId() { return id; }
 
-    public Long getId() {
-        return id;
-    }
+    public Vendor getVendor() { return vendor; }
+    public void setVendor(Vendor vendor) { this.vendor = vendor; }
 
-    public Vendor getVendor() {
-        return vendor;
-    }
+    public DocumentType getDocumentType() { return documentType; }
+    public void setDocumentType(DocumentType documentType) { this.documentType = documentType; }
 
-    public void setVendor(Vendor vendor) {
-        this.vendor = vendor;
-    }
+    public String getFileUrl() { return fileUrl; }
+    public void setFileUrl(String fileUrl) { this.fileUrl = fileUrl; }
 
-    public DocumentType getDocumentType() {
-        return documentType;
-    }
+    public LocalDateTime getUploadedAt() { return uploadedAt; }
 
-    public void setDocumentType(DocumentType documentType) {
-        this.documentType = documentType;
-    }
-
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
-    public LocalDateTime getUploadedAt() {
-        return uploadedAt;
-    }
-
-    public LocalDate getExpiryDate() {
-        return expiryDate;
-    }
-
+    public LocalDate getExpiryDate() { return expiryDate; }
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
         updateValidityStatus();
     }
 
-    public Boolean getIsValid() {
-        return isValid;
-    }
+    public Boolean getIsValid() { return isValid; }
 }
