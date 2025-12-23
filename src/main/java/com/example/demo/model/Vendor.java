@@ -1,13 +1,11 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.*;
 
 @Entity
 @Table(
@@ -20,7 +18,7 @@ public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY) // ✅ hide from input
+    @JsonIgnore
     private Long id;
 
     @Column(name = "vendor_name", nullable = false, unique = true)
@@ -36,26 +34,39 @@ public class Vendor {
     private String industry;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY) // ✅ hide from input
+    @JsonIgnore
     private LocalDateTime createdAt;
 
+    // 🔥 CRITICAL FIX — hide relation from JSON
     @ManyToMany
     @JoinTable(
         name = "vendor_document_types",
         joinColumns = @JoinColumn(name = "vendor_id"),
         inverseJoinColumns = @JoinColumn(name = "document_type_id")
     )
-    @JsonIgnore 
+    @JsonIgnore
     private Set<DocumentType> supportedDocumentTypes = new HashSet<>();
 
     public Vendor() {}
+
+    public Vendor(
+            String vendorName,
+            String email,
+            String phone,
+            String industry) {
+
+        this.vendorName = vendorName;
+        this.email = email;
+        this.phone = phone;
+        this.industry = industry;
+    }
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // getters & setters
+    // -------- getters & setters --------
 
     public Long getId() {
         return id;
@@ -95,5 +106,9 @@ public class Vendor {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public Set<DocumentType> getSupportedDocumentTypes() {
+        return supportedDocumentTypes;
     }
 }

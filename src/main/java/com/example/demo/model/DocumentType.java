@@ -2,6 +2,8 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -11,23 +13,21 @@ import java.util.Set;
 @Table(name = "document_types")
 public class DocumentType {
 
-    // id Long (auto-generated, hidden from API)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
 
-    // typeName String, unique
+    @NotNull
     @Column(name = "type_name", unique = true, nullable = false)
     private String typeName;
 
-    // description String
     private String description;
 
-    // required Boolean
     private Boolean required;
 
-    // weight Integer, ≥ 0 (validation handled in service)
+    @NotNull
+    @Min(0)
     @Column(nullable = false)
     private Integer weight;
 
@@ -36,30 +36,24 @@ public class DocumentType {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    // vendors Set<Vendor> many-to-many inverse side (hidden from API)
     @ManyToMany(mappedBy = "supportedDocumentTypes")
     @JsonIgnore
     private Set<Vendor> vendors = new HashSet<>();
 
-    // no-arg constructor
     public DocumentType() {
     }
 
-    // parameterized constructor
     public DocumentType(String typeName, String description, Boolean required, Integer weight) {
         this.typeName = typeName;
-        this.description = description;
-        this.required = required;
-        this.weight = weight;
+        setDescription(description);
+        setRequired(required);
+        setWeight(weight); 
     }
-
-    // createdAt set in @PrePersist
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // -------- getters & setters --------
 
     public Long getId() {
         return id;
@@ -94,6 +88,9 @@ public class DocumentType {
     }
 
     public void setWeight(Integer weight) {
+        if (weight == null || weight < 0) {
+            throw new IllegalArgumentException("Weight must be greater than or equal to 0");
+        }
         this.weight = weight;
     }
 
