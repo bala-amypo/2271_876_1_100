@@ -36,17 +36,24 @@ public class VendorDocument {
         this.expiryDate = expiryDate;
     }
 
-    /** ✅ REQUIRED BY TESTS */
+    /* ---------- REQUIRED BY TESTS ---------- */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** ✅ REQUIRED BY TESTS */
     public void setIsValid(Boolean isValid) {
         this.isValid = isValid;
     }
 
-    /** ✅ REQUIRED BY TESTS */
+    /* ---------- REQUIRED BY SERVICES ---------- */
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
     @PrePersist
     public void prePersist() {
         this.uploadedAt = LocalDateTime.now();
