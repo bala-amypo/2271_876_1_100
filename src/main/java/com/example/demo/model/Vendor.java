@@ -6,10 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(
-    name = "vendors",
-    uniqueConstraints = @UniqueConstraint(columnNames = "vendor_name")
-)
+@Table(name = "vendors")
 public class Vendor {
 
     @Id
@@ -28,7 +25,7 @@ public class Vendor {
     @Column(nullable = false)
     private String industry;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @ManyToMany
@@ -48,16 +45,18 @@ public class Vendor {
         this.industry = industry;
     }
 
-    /** ✅ REQUIRED BY TESTS */
+    /* ===== REQUIRED BY TESTS ===== */
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** ✅ REQUIRED BY TESTS */
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    /* ===== getters & setters ===== */
 
     public Long getId() { return id; }
     public String getVendorName() { return vendorName; }

@@ -37,16 +37,18 @@ public class DocumentType {
         this.weight = weight;
     }
 
-    /** ✅ REQUIRED BY TESTS */
+    /* ===== REQUIRED BY TESTS ===== */
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** ✅ REQUIRED BY TESTS */
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    /* ===== getters & setters ===== */
 
     public Long getId() { return id; }
     public String getTypeName() { return typeName; }
@@ -58,5 +60,4 @@ public class DocumentType {
     public Integer getWeight() { return weight; }
     public void setWeight(Integer weight) { this.weight = weight; }
     public LocalDateTime getCreatedAt() { return createdAt; }
-    public Set<Vendor> getVendors() { return vendors; }
 }

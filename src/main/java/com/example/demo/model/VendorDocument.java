@@ -13,14 +13,17 @@ public class VendorDocument {
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "vendor_id")
     private Vendor vendor;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "document_type_id")
     private DocumentType documentType;
 
     @Column(nullable = false)
     private String fileUrl;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime uploadedAt;
 
     private LocalDate expiryDate;
@@ -36,16 +39,12 @@ public class VendorDocument {
         this.expiryDate = expiryDate;
     }
 
-    /* ---------- REQUIRED BY TESTS ---------- */
+    /* ===== REQUIRED BY TESTS ===== */
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    public void setIsValid(Boolean isValid) {
-        this.isValid = isValid;
-    }
-
-    /* ---------- REQUIRED BY SERVICES ---------- */
     public void setVendor(Vendor vendor) {
         this.vendor = vendor;
     }
@@ -54,11 +53,34 @@ public class VendorDocument {
         this.documentType = documentType;
     }
 
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
+
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+        updateValidity();
+    }
+
+    public void setIsValid(Boolean isValid) {
+        this.isValid = isValid;
+    }
+
     @PrePersist
     public void prePersist() {
         this.uploadedAt = LocalDateTime.now();
-        this.isValid = expiryDate == null || expiryDate.isAfter(LocalDate.now());
+        updateValidity();
     }
+
+    private void updateValidity() {
+        if (expiryDate == null) {
+            this.isValid = true;
+        } else {
+            this.isValid = expiryDate.isAfter(LocalDate.now());
+        }
+    }
+
+    /* ===== getters ===== */
 
     public Long getId() { return id; }
     public Vendor getVendor() { return vendor; }
