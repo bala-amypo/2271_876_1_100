@@ -1,8 +1,6 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,15 +8,12 @@ import java.util.Set;
 @Entity
 @Table(
     name = "vendors",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "vendor_name")
-    }
+    uniqueConstraints = @UniqueConstraint(columnNames = "vendor_name")
 )
 public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Long id;
 
     @Column(name = "vendor_name", nullable = false, unique = true)
@@ -34,7 +29,6 @@ public class Vendor {
     private String industry;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonIgnore
     private LocalDateTime createdAt;
 
     @ManyToMany
@@ -43,44 +37,37 @@ public class Vendor {
         joinColumns = @JoinColumn(name = "vendor_id"),
         inverseJoinColumns = @JoinColumn(name = "document_type_id")
     )
-    @JsonIgnore
     private Set<DocumentType> supportedDocumentTypes = new HashSet<>();
 
     public Vendor() {}
 
-    // 🔴 REQUIRED BY TESTS
+    public Vendor(String vendorName, String email, String phone, String industry) {
+        this.vendorName = vendorName;
+        this.email = email;
+        this.phone = phone;
+        this.industry = industry;
+    }
+
+    /** ✅ REQUIRED BY TESTS */
     public void setId(Long id) {
         this.id = id;
     }
 
-    // 🔴 REQUIRED BY TESTS
+    /** ✅ REQUIRED BY TESTS */
+    @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
-    @PrePersist
-    protected void onCreate() {
-        prePersist();
-    }
-
-    // getters & setters
     public Long getId() { return id; }
-
     public String getVendorName() { return vendorName; }
     public void setVendorName(String vendorName) { this.vendorName = vendorName; }
-
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-
     public String getIndustry() { return industry; }
     public void setIndustry(String industry) { this.industry = industry; }
-
     public LocalDateTime getCreatedAt() { return createdAt; }
-
-    public Set<DocumentType> getSupportedDocumentTypes() {
-        return supportedDocumentTypes;
-    }
+    public Set<DocumentType> getSupportedDocumentTypes() { return supportedDocumentTypes; }
 }
