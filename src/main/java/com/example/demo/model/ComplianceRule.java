@@ -35,14 +35,11 @@ public class ComplianceRule {
         this.threshold = threshold;
     }
 
-    // ✅ MUST BE PUBLIC — TEST CALLS THIS DIRECTLY
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        if (this.threshold == null || this.threshold < 0) {
-            this.threshold = 0.0;
-        }
     }
+
 
     // getters & setters
     public Long getId() { return id; }
