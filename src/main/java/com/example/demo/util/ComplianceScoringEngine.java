@@ -7,30 +7,27 @@ import java.util.List;
 
 public class ComplianceScoringEngine {
 
-    // ===== ORIGINAL LOGIC (UNCHANGED) =====
-    public double calculateScore(
-            List<DocumentType> requiredTypes,
-            List<VendorDocument> vendorDocuments
-    ) {
-        if (requiredTypes == null || requiredTypes.isEmpty()) {
+    /**
+     * IMPORTANT:
+     * Tests use generic inference that mixes DocumentType & VendorDocument.
+     * So we accept raw List and cast internally.
+     * Business logic remains unchanged.
+     */
+    @SuppressWarnings("unchecked")
+    public double calculateScore(List requiredTypes, List vendorDocuments) {
+
+        List<DocumentType> docTypes = (List<DocumentType>) requiredTypes;
+        List<VendorDocument> vendorDocs = (List<VendorDocument>) vendorDocuments;
+
+        if (docTypes == null || docTypes.isEmpty()) {
             return 100.0;
         }
 
-        long validCount = vendorDocuments.stream()
+        long validCount = vendorDocs.stream()
                 .filter(VendorDocument::getIsValid)
                 .count();
 
-        return ((double) validCount / requiredTypes.size()) * 100.0;
-    }
-
-    // ===== TEST-COMPATIBILITY OVERLOAD =====
-    // DO NOT REMOVE — REQUIRED FOR GENERIC INFERENCE
-    @SuppressWarnings("unchecked")
-    public double calculateScore(List<?> requiredTypes, List<?> vendorDocuments) {
-        return calculateScore(
-                (List<DocumentType>) requiredTypes,
-                (List<VendorDocument>) vendorDocuments
-        );
+        return ((double) validCount / docTypes.size()) * 100.0;
     }
 
     public String deriveRating(double score) {
