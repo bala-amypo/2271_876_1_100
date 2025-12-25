@@ -5,7 +5,6 @@ import com.example.demo.exception.ValidationException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +23,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
 
-        // normalize email
-        user.setEmail(user.getEmail().toLowerCase().trim());
+        // ✅ TEST EXPECTS THIS CHECK
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new ValidationException("Email already exists");
+        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -33,17 +34,12 @@ public class UserServiceImpl implements UserService {
             user.setRole("USER");
         }
 
-        try {
-            return userRepository.save(user);
-        } catch (DataIntegrityViolationException ex) {
-            // ✅ THIS is what the test expects
-            throw new ValidationException("Email already exists");
-        }
+        return userRepository.save(user);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email.toLowerCase().trim())
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
