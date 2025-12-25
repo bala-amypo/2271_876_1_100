@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.exception.ValidationException;
 import com.example.demo.model.ComplianceScore;
 import com.example.demo.model.DocumentType;
 import com.example.demo.model.Vendor;
@@ -13,6 +14,7 @@ import com.example.demo.service.ComplianceScoreService;
 import com.example.demo.util.ComplianceScoringEngine;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,25 +45,26 @@ public class ComplianceScoreServiceImpl implements ComplianceScoreService {
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
 
-        List<DocumentType> requiredTypes =
-                documentTypeRepository.findByRequiredTrue();
-
+        List<DocumentType> requiredTypes = documentTypeRepository.findByRequiredTrue();
         List<VendorDocument> vendorDocuments =
                 vendorDocumentRepository.findByVendor(vendor);
 
-        double scoreValue =
-                scoringEngine.calculateScore(requiredTypes, vendorDocuments);
+        double scoreValue = scoringEngine.calculateScore(requiredTypes, vendorDocuments);
 
-        String rating =
-                scoringEngine.deriveRating(scoreValue);
+        if (scoreValue < 0) {
+            throw new ValidationException("Compliance score cannot be negative");
+        }
+
+        String rating = scoringEngine.deriveRating(scoreValue);
 
         ComplianceScore score = complianceScoreRepository
                 .findByVendor_Id(vendorId)
                 .orElse(new ComplianceScore());
 
         score.setVendor(vendor);
-        score.setScore(scoreValue);   // ✅ CORRECT FIELD
-        score.setRating(rating);      // ✅ CORRECT FIELD
+        score.setScoreValue(scoreValue);          // ✅ FIXED
+        score.setRating(rating);
+        score.setLastEvaluated(LocalDateTime.now());
 
         return complianceScoreRepository.save(score);
     }
