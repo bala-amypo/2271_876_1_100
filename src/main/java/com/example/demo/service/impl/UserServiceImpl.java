@@ -5,6 +5,7 @@ import com.example.demo.exception.ValidationException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +24,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
 
-        // ✅ Normalize email BEFORE validation
-        String normalizedEmail = user.getEmail().toLowerCase().trim();
-        user.setEmail(normalizedEmail);
-
-        // ✅ Test expects this exact message
-        if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new ValidationException("Email already exists");
-        }
+        // normalize email
+        user.setEmail(user.getEmail().toLowerCase().trim());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -38,7 +33,12 @@ public class UserServiceImpl implements UserService {
             user.setRole("USER");
         }
 
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            // ✅ THIS is what the test expects
+            throw new ValidationException("Email already exists");
+        }
     }
 
     @Override
