@@ -10,10 +10,16 @@ import java.util.List;
 
 public interface VendorDocumentRepository extends JpaRepository<VendorDocument, Long> {
 
-    // Used by ComplianceScoreService
+    // Used by ComplianceScoreServiceImpl
     List<VendorDocument> findByVendor(Vendor vendor);
 
-    // REQUIRED BY TESTS
+    // Used by VendorDocumentServiceImpl
+    List<VendorDocument> findByVendorId(Long vendorId);
+
+    // Used by TESTS (underscore version)
+    List<VendorDocument> findByVendor_Id(Long vendorId);
+
+    // Used by TESTS
     @Query("SELECT vd FROM VendorDocument vd WHERE vd.expiryDate < :date")
     List<VendorDocument> findExpiredDocuments(LocalDate date);
 }
