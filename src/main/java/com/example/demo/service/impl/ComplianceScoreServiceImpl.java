@@ -26,6 +26,7 @@ public class ComplianceScoreServiceImpl implements ComplianceScoreService {
     private final ComplianceScoreRepository complianceScoreRepository;
     private final ComplianceScoringEngine scoringEngine;
 
+    /* ===== REQUIRED BY TESTS ===== */
     public ComplianceScoreServiceImpl(
             VendorRepository vendorRepository,
             DocumentTypeRepository documentTypeRepository,
@@ -45,7 +46,9 @@ public class ComplianceScoreServiceImpl implements ComplianceScoreService {
         Vendor vendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
 
-        List<DocumentType> requiredTypes = documentTypeRepository.findByRequiredTrue();
+        List<DocumentType> requiredTypes =
+                documentTypeRepository.findByRequiredTrue();
+
         List<VendorDocument> vendorDocuments =
                 vendorDocumentRepository.findByVendor(vendor);
 
@@ -62,7 +65,7 @@ public class ComplianceScoreServiceImpl implements ComplianceScoreService {
                 .orElse(new ComplianceScore());
 
         score.setVendor(vendor);
-        score.setScoreValue(scoreValue);          // ✅ FIXED
+        score.setScoreValue(scoreValue);
         score.setRating(rating);
         score.setLastEvaluated(LocalDateTime.now());
 
