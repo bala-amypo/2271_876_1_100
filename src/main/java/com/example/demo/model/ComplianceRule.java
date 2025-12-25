@@ -39,6 +39,12 @@ public class ComplianceRule {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+    @PrePersist
+    protected void onCreate() {
+        if (this.score == null) {
+            this.score = 0.0;
+        }
+    }
 
 
     // getters & setters

@@ -11,6 +11,7 @@ import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorDocumentService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,8 +24,7 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
     public VendorDocumentServiceImpl(
             VendorDocumentRepository vendorDocumentRepository,
             VendorRepository vendorRepository,
-            DocumentTypeRepository documentTypeRepository
-    ) {
+            DocumentTypeRepository documentTypeRepository) {
         this.vendorDocumentRepository = vendorDocumentRepository;
         this.vendorRepository = vendorRepository;
         this.documentTypeRepository = documentTypeRepository;
@@ -39,12 +39,10 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
         DocumentType documentType = documentTypeRepository.findById(typeId)
                 .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
 
-        if (document.getFileUrl() == null || document.getFileUrl().trim().isEmpty()) {
-            throw new ValidationException("File URL is required");
+        if (document.getExpiryDate() != null &&
+                document.getExpiryDate().isBefore(LocalDate.now())) {
+            throw new ValidationException("Document is expired");
         }
-
-        // ✅ DO NOT block expired documents
-        // Validity is handled by VendorDocument @PrePersist
 
         document.setVendor(vendor);
         document.setDocumentType(documentType);
