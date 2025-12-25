@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface ComplianceScoreRepository extends JpaRepository<ComplianceScore, Long> {
 
-    // TEST EXPECTS THIS EXACT NAME
+    // used by services
+    Optional<ComplianceScore> findByVendorId(Long vendorId);
+
+    // REQUIRED by tests
     Optional<ComplianceScore> findByVendor_Id(Long vendorId);
 }
