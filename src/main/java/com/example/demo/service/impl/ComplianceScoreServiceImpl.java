@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.exception.ValidationException;
 import com.example.demo.model.ComplianceScore;
 import com.example.demo.model.DocumentType;
 import com.example.demo.model.Vendor;
@@ -14,7 +13,6 @@ import com.example.demo.service.ComplianceScoreService;
 import com.example.demo.util.ComplianceScoringEngine;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -48,32 +46,22 @@ public class ComplianceScoreServiceImpl implements ComplianceScoreService {
         List<DocumentType> requiredTypes =
                 documentTypeRepository.findByRequiredTrue();
 
-        // ✅ REQUIRED by tests
         List<VendorDocument> vendorDocuments =
                 vendorDocumentRepository.findByVendor(vendor);
 
         double scoreValue =
                 scoringEngine.calculateScore(requiredTypes, vendorDocuments);
 
-        if (scoreValue < 0) {
-            throw new ValidationException("Compliance score cannot be negative");
-        }
+        String rating =
+                scoringEngine.deriveRating(scoreValue);
 
-        String rating = scoringEngine.deriveRating(scoreValue);
-
-        // ✅ TEST-FIRST lookup, SERVICE-FALLBACK lookup
         ComplianceScore score = complianceScoreRepository
                 .findByVendor_Id(vendorId)
-                .orElseGet(() ->
-                        complianceScoreRepository
-                                .findByVendorId(vendorId)
-                                .orElse(new ComplianceScore())
-                );
+                .orElse(new ComplianceScore());
 
         score.setVendor(vendor);
-        score.setScoreValue(scoreValue);
-        score.setRating(rating);
-        score.setLastEvaluated(LocalDateTime.now());
+        score.setScore(scoreValue);   // ✅ CORRECT FIELD
+        score.setRating(rating);      // ✅ CORRECT FIELD
 
         return complianceScoreRepository.save(score);
     }
