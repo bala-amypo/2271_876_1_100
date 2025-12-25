@@ -50,14 +50,53 @@ public class DocumentType {
 
     /* ===== getters & setters ===== */
 
-    public Long getId() { return id; }
-    public String getTypeName() { return typeName; }
-    public void setTypeName(String typeName) { this.typeName = typeName; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public Boolean getRequired() { return required; }
-    public void setRequired(Boolean required) { this.required = required; }
-    public Integer getWeight() { return weight; }
-    public void setWeight(Integer weight) { this.weight = weight; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getRequired() {
+        return required;
+    }
+
+    public void setRequired(Boolean required) {
+        this.required = required;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    /* ===== REQUIRED BY TESTS ===== */
+
+    public Set<Vendor> getVendors() {
+        return vendors;
+    }
+
+    public void setVendors(Set<Vendor> vendors) {
+        this.vendors = vendors;
+    }
 }
