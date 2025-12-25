@@ -20,6 +20,9 @@ public class ComplianceRule {
 
     private Double threshold;
 
+    /* ===== REQUIRED BY TESTS ===== */
+    private Double score;
+
     private LocalDateTime createdAt;
 
     public ComplianceRule() {}
@@ -37,10 +40,10 @@ public class ComplianceRule {
 
     /* ===== REQUIRED BY TESTS ===== */
     @PrePersist
-    protected void prePersist() {
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        if (this.threshold == null) {
-            this.threshold = 0.0;
+        if (this.score == null) {
+            this.score = 0.0;
         }
     }
 
@@ -60,6 +63,9 @@ public class ComplianceRule {
 
     public Double getThreshold() { return threshold; }
     public void setThreshold(Double threshold) { this.threshold = threshold; }
+
+    public Double getScore() { return score; }
+    public void setScore(Double score) { this.score = score; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }
