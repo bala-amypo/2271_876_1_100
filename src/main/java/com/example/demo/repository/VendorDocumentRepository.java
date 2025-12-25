@@ -10,6 +10,7 @@ public interface VendorDocumentRepository extends JpaRepository<VendorDocument, 
 
     // used by services
     List<VendorDocument> findByVendorId(Long vendorId);
+    List<VendorDocument> findByVendor(Vendor vendor);
 
     // used by tests
     List<VendorDocument> findExpiredDocuments(LocalDate date);
