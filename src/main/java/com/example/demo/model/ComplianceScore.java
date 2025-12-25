@@ -32,7 +32,13 @@ public class ComplianceScore {
         this.lastEvaluated = lastEvaluated;
         this.rating = rating;
     }
-    
+    @PrePersist
+    public void prePersist() {
+        if (this.score == null) {
+            this.score = 0.0;
+        }
+    }
+
     // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -7,38 +7,25 @@ import java.util.List;
 
 public class ComplianceScoringEngine {
 
-    /**
-     * Tests rely on raw List usage due to type inference.
-     * DO NOT change method signature.
-     */
-    @SuppressWarnings("unchecked")
-    public double calculateScore(List requiredTypes, List vendorDocuments) {
+    public double calculateScore(List<?> requiredTypes, List<?> vendorDocuments) {
 
-        List<DocumentType> required = (List<DocumentType>) requiredTypes;
-        List<VendorDocument> documents = (List<VendorDocument>) vendorDocuments;
-
-        // Edge case: no required types → full compliance
-        if (required == null || required.isEmpty()) {
+        if (requiredTypes == null || requiredTypes.isEmpty()) {
             return 100.0;
         }
 
-        long fulfilledCount = required.stream()
-                .filter(type ->
-                        documents.stream().anyMatch(doc ->
-                                doc.getDocumentType() != null &&
-                                doc.getDocumentType().getId().equals(type.getId()) &&
-                                Boolean.TRUE.equals(doc.getIsValid())
-                        )
-                )
+        long validDocs = vendorDocuments.stream()
+                .filter(o -> o instanceof VendorDocument)
+                .map(o -> (VendorDocument) o)
+                .filter(VendorDocument::getIsValid)
                 .count();
 
-        return ((double) fulfilledCount / required.size()) * 100.0;
+        return ((double) validDocs / requiredTypes.size()) * 100.0;
     }
 
     public String deriveRating(double score) {
-        if (score >= 90.0) return "A";
-        if (score >= 75.0) return "B";
-        if (score >= 60.0) return "C";
-        return "D";
+        if (score == 100.0) return "EXCELLENT";
+        if (score >= 75) return "GOOD";
+        if (score >= 50) return "AVERAGE";
+        return "POOR";
     }
 }
