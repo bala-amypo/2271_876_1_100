@@ -6,52 +6,73 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "compliance_scores")
 public class ComplianceScore {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @OneToOne
-    @JoinColumn(name = "vendor_id")
+
+    @ManyToOne
+    @JoinColumn(name = "vendor_id", nullable = false)
     private Vendor vendor;
-    
+
     @Column(nullable = false)
-    private Double scoreValue;
-    
-    @Column(nullable = false)
-    private LocalDateTime lastEvaluated;
-    
+    private Double score;
+
     @Column(nullable = false)
     private String rating;
-    
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public ComplianceScore() {}
-    
-    public ComplianceScore(Vendor vendor, Double scoreValue, LocalDateTime lastEvaluated, String rating) {
+
+    public ComplianceScore(Vendor vendor, Double score, String rating) {
         this.vendor = vendor;
-        this.scoreValue = scoreValue;
-        this.lastEvaluated = lastEvaluated;
+        this.score = score;
         this.rating = rating;
     }
+
     @PrePersist
-    public void prePersist() {
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
         if (this.score == null) {
-            this.score = 0.0;
+            this.score = 0.0; // ✅ REQUIRED BY TEST
+        }
+        if (this.rating == null) {
+            this.rating = "POOR"; // ✅ DEFAULT
         }
     }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public Vendor getVendor() { return vendor; }
-    public void setVendor(Vendor vendor) { this.vendor = vendor; }
-    
-    public Double getScoreValue() { return scoreValue; }
-    public void setScoreValue(Double scoreValue) { this.scoreValue = scoreValue; }
-    
-    public LocalDateTime getLastEvaluated() { return lastEvaluated; }
-    public void setLastEvaluated(LocalDateTime lastEvaluated) { this.lastEvaluated = lastEvaluated; }
-    
-    public String getRating() { return rating; }
-    public void setRating(String rating) { this.rating = rating; }
+    // Getters & setters
+    public Long getId() {
+        return id;
+    }
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
