@@ -39,6 +39,12 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
         DocumentType documentType = documentTypeRepository.findById(typeId)
                 .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
 
+        // ✅ REQUIRED BY TEST: File URL must exist
+        if (document.getFileUrl() == null || document.getFileUrl().trim().isEmpty()) {
+            throw new ValidationException("File URL is required");
+        }
+
+        // ✅ REQUIRED BY TEST: Expired document must throw ValidationException
         if (document.getExpiryDate() != null &&
                 document.getExpiryDate().isBefore(LocalDate.now())) {
             throw new ValidationException("Document is expired");
