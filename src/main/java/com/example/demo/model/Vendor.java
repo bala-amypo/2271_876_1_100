@@ -56,16 +56,14 @@ public class Vendor {
         this.createdAt = LocalDateTime.now();
     }
 
+    /* ===== BUSINESS METHODS ===== */
+
+    public void addDocumentType(DocumentType type) {
+        this.supportedDocumentTypes.add(type);
+        type.getVendors().add(this);
+    }
+
     /* ===== getters & setters ===== */
-    
-    public void addDocumentType(DocumentType type) {
-        this.supportedDocumentTypes.add(type);
-        type.getVendors().add(this);
-    }
-    public void addDocumentType(DocumentType type) {
-        this.supportedDocumentTypes.add(type);
-        type.getVendors().add(this);
-    }
 
     public Long getId() { return id; }
     public String getVendorName() { return vendorName; }

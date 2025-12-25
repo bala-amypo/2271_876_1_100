@@ -2,66 +2,78 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "compliance_rules")
-public class ComplianceRule {
+@Table(name = "vendors")
+public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String ruleName;
+    @Column(name = "vendor_name", nullable = false, unique = true)
+    private String vendorName;
 
-    private String ruleDescription;
+    @Column(nullable = false)
+    private String email;
 
-    private String matchType;
+    @Column(nullable = false)
+    private String phone;
 
-    private Double threshold;
+    @Column(nullable = false)
+    private String industry;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public ComplianceRule() {}
+    @ManyToMany
+    @JoinTable(
+        name = "vendor_document_types",
+        joinColumns = @JoinColumn(name = "vendor_id"),
+        inverseJoinColumns = @JoinColumn(name = "document_type_id")
+    )
+    private Set<DocumentType> supportedDocumentTypes = new HashSet<>();
 
-    public ComplianceRule(
-            String ruleName,
-            String ruleDescription,
-            String matchType,
-            Double threshold) {
-        this.ruleName = ruleName;
-        this.ruleDescription = ruleDescription;
-        this.matchType = matchType;
-        this.threshold = threshold;
+    public Vendor() {}
+
+    public Vendor(String vendorName, String email, String phone, String industry) {
+        this.vendorName = vendorName;
+        this.email = email;
+        this.phone = phone;
+        this.industry = industry;
+    }
+
+    /* ===== REQUIRED BY TESTS ===== */
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-    @PrePersist
-    protected void onCreate() {
-        if (this.score == null) {
-            this.score = 0.0;
-        }
+
+    /* ===== BUSINESS METHODS ===== */
+
+    public void addDocumentType(DocumentType type) {
+        this.supportedDocumentTypes.add(type);
+        type.getVendors().add(this);
     }
 
+    /* ===== getters & setters ===== */
 
-    // getters & setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getRuleName() { return ruleName; }
-    public void setRuleName(String ruleName) { this.ruleName = ruleName; }
-
-    public String getRuleDescription() { return ruleDescription; }
-    public void setRuleDescription(String ruleDescription) { this.ruleDescription = ruleDescription; }
-
-    public String getMatchType() { return matchType; }
-    public void setMatchType(String matchType) { this.matchType = matchType; }
-
-    public Double getThreshold() { return threshold; }
-    public void setThreshold(Double threshold) { this.threshold = threshold; }
-
+    public String getVendorName() { return vendorName; }
+    public void setVendorName(String vendorName) { this.vendorName = vendorName; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getIndustry() { return industry; }
+    public void setIndustry(String industry) { this.industry = industry; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public Set<DocumentType> getSupportedDocumentTypes() { return supportedDocumentTypes; }
 }
