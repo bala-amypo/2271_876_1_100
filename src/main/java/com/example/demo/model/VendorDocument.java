@@ -3,6 +3,7 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "vendor_documents")
@@ -89,4 +90,19 @@ public class VendorDocument {
     public LocalDateTime getUploadedAt() { return uploadedAt; }
     public LocalDate getExpiryDate() { return expiryDate; }
     public Boolean getIsValid() { return isValid; }
+
+    /* ===== CRITICAL FOR TEST GENERICS ===== */
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof VendorDocument)) return false;
+        VendorDocument that = (VendorDocument) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
