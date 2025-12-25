@@ -11,7 +11,6 @@ import com.example.demo.repository.VendorRepository;
 import com.example.demo.service.VendorDocumentService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -44,11 +43,8 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
             throw new ValidationException("File URL is required");
         }
 
-        // ✅ FIXED: expiry today OR past is invalid
-        if (document.getExpiryDate() != null &&
-                !document.getExpiryDate().isAfter(LocalDate.now())) {
-            throw new ValidationException("Document is expired");
-        }
+        // ✅ DO NOT block expired documents
+        // Validity is handled by VendorDocument @PrePersist
 
         document.setVendor(vendor);
         document.setDocumentType(documentType);
