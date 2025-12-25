@@ -59,21 +59,59 @@ public class Vendor {
     /* ===== BUSINESS METHODS ===== */
 
     public void addDocumentType(DocumentType type) {
+        if (type == null) return;
         this.supportedDocumentTypes.add(type);
         type.getVendors().add(this);
     }
 
     /* ===== getters & setters ===== */
 
-    public Long getId() { return id; }
-    public String getVendorName() { return vendorName; }
-    public void setVendorName(String vendorName) { this.vendorName = vendorName; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    public String getIndustry() { return industry; }
-    public void setIndustry(String industry) { this.industry = industry; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public Set<DocumentType> getSupportedDocumentTypes() { return supportedDocumentTypes; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public void setVendorName(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getIndustry() {
+        return industry;
+    }
+
+    public void setIndustry(String industry) {
+        this.industry = industry;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Set<DocumentType> getSupportedDocumentTypes() {
+        return supportedDocumentTypes;
+    }
+
+    public void setSupportedDocumentTypes(Set<DocumentType> supportedDocumentTypes) {
+        this.supportedDocumentTypes =
+                supportedDocumentTypes != null ? supportedDocumentTypes : new HashSet<>();
+    }
 }

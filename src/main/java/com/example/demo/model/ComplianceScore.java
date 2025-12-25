@@ -11,17 +11,36 @@ public class ComplianceScore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "vendor_id")
     private Vendor vendor;
 
+    @Column(nullable = false)
     private Double scoreValue;
 
     private String rating;
 
     private LocalDateTime lastEvaluated;
 
+    public ComplianceScore() {}
+
+    /* ===== REQUIRED BY TESTS ===== */
+    @PrePersist
+    protected void prePersist() {
+        if (this.scoreValue == null) {
+            this.scoreValue = 0.0;
+        }
+        this.lastEvaluated = LocalDateTime.now();
+    }
+
+    /* ===== getters & setters ===== */
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Vendor getVendor() {
