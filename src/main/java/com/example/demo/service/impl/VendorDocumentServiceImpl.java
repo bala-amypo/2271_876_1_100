@@ -44,9 +44,10 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
             throw new ValidationException("File URL is required");
         }
 
+        // ✅ FIXED: expiry today OR past is invalid
         if (document.getExpiryDate() != null &&
-                document.getExpiryDate().isBefore(LocalDate.now())) {
-            throw new ValidationException("Expiry date cannot be in the past");
+                !document.getExpiryDate().isAfter(LocalDate.now())) {
+            throw new ValidationException("Document is expired");
         }
 
         document.setVendor(vendor);
@@ -57,7 +58,6 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
 
     @Override
     public List<VendorDocument> getDocumentsForVendor(Long vendorId) {
-        // ✅ REQUIRED by tests
         return vendorDocumentRepository.findByVendorId(vendorId);
     }
 
