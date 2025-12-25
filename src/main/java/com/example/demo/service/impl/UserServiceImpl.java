@@ -10,36 +10,43 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
-    
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+
+    public UserServiceImpl(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    
+
     @Override
     public User registerUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
+
+        // ✅ Normalize email BEFORE validation
+        String normalizedEmail = user.getEmail().toLowerCase().trim();
+        user.setEmail(normalizedEmail);
+
+        // ✅ Test expects this exact message
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new ValidationException("Email already exists");
         }
-        
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
+
         if (user.getRole() == null) {
             user.setRole("USER");
         }
-        
+
         return userRepository.save(user);
     }
-    
+
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmail(email.toLowerCase().trim())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
-    
+
     @Override
     public User getById(Long id) {
         return userRepository.findById(id)
