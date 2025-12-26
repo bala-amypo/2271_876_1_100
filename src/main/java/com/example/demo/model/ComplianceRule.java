@@ -38,12 +38,11 @@ public class ComplianceRule {
         this.threshold = threshold;
     }
 
-    /* ===== REQUIRED BY TESTS ===== */
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
-        if (this.score == null) {
-            this.score = 0.0;
+        if (this.threshold == null) {
+            this.threshold = 0.0;
         }
     }
 

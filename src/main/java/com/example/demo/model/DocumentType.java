@@ -84,4 +84,5 @@ public class DocumentType {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

@@ -40,9 +40,10 @@ public VendorDocument uploadDocument(Long vendorId, Long typeId, VendorDocument 
             .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
 
     if (document.getExpiryDate() != null &&
-            document.getExpiryDate().isBefore(LocalDate.now())) {
-        throw new ValidationException("Document is expired");
-    }
+        document.getExpiryDate().isBefore(LocalDate.now())) {
+    throw new IllegalArgumentException("Expiry date cannot be in the past");
+}
+
 
     document.setVendor(vendor);
     document.setDocumentType(documentType);
