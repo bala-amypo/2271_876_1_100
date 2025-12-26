@@ -12,7 +12,7 @@ public class ComplianceScoringEngine {
      */
     public double calculateScore(List requiredTypes, List vendorDocuments) {
 
-        // No required documents → 100%
+        // No required types → full score
         if (requiredTypes == null || requiredTypes.isEmpty()) {
             return 100.0;
         }
@@ -23,8 +23,8 @@ public class ComplianceScoringEngine {
 
         long validCount = vendorDocuments.stream()
                 .filter(o -> o instanceof VendorDocument)
-                .map(o -> (VendorDocument) o)
-                .filter(vd -> Boolean.TRUE.equals(vd.getValid()))  // ✅ CORRECT
+                .map(o -> (VendorDocument) o)          // ✅ EXPLICIT CAST
+                .filter(vd -> Boolean.TRUE.equals(vd.getValid())) // ✅ NOW SAFE
                 .count();
 
         double score = ((double) validCount / requiredTypes.size()) * 100.0;
@@ -33,7 +33,7 @@ public class ComplianceScoringEngine {
     }
 
     /**
-     * EXACT strings expected by tests
+     * EXACT rating strings expected by tests
      */
     public String deriveRating(double score) {
         if (score >= 90) return "EXCELLENT";
