@@ -9,10 +9,11 @@ public class ComplianceScoringEngine {
     /**
      * Test-safe scoring logic.
      * Tests intentionally mix List<DocumentType> and List<VendorDocument>.
+     * We must ONLY count VendorDocument instances.
      */
     public double calculateScore(List requiredTypes, List vendorDocuments) {
 
-        // Edge case: no required types → full score
+        // Edge case: no required document types
         if (requiredTypes == null || requiredTypes.isEmpty()) {
             return 100.0;
         }
@@ -22,14 +23,9 @@ public class ComplianceScoringEngine {
         }
 
         long validCount = vendorDocuments.stream()
-                .filter(o -> {
-                    // VendorDocument → check validity
-                    if (o instanceof VendorDocument vd) {
-                        return Boolean.TRUE.equals(vd.getIsValid());
-                    }
-                    // DocumentType mixed in tests → treat as valid
-                    return true;
-                })
+                .filter(o -> o instanceof VendorDocument)
+                .map(o -> (VendorDocument) o)
+                .filter(vd -> Boolean.TRUE.equals(vd.getIsValid()))
                 .count();
 
         double score = ((double) validCount / requiredTypes.size()) * 100.0;
@@ -42,8 +38,8 @@ public class ComplianceScoringEngine {
      */
     public String deriveRating(double score) {
         if (score >= 90) return "EXCELLENT";
-        if (score >= 75) return "GOOD";
-        if (score >= 50) return "AVERAGE";
+        if (score >= 80) return "GOOD";
+        if (score >= 60) return "AVERAGE";
         return "POOR";
     }
 }
