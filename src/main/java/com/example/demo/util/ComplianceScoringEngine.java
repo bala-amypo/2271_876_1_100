@@ -9,7 +9,7 @@ public class ComplianceScoringEngine {
     /**
      * Test-safe scoring logic.
      * Tests intentionally mix List<DocumentType> and List<VendorDocument>.
-     * We must ONLY count VendorDocument instances.
+     * We ONLY count VendorDocument instances.
      */
     public double calculateScore(List requiredTypes, List vendorDocuments) {
 
@@ -25,7 +25,7 @@ public class ComplianceScoringEngine {
         long validCount = vendorDocuments.stream()
                 .filter(o -> o instanceof VendorDocument)
                 .map(o -> (VendorDocument) o)
-                .filter(vd -> Boolean.TRUE.equals(vd.getIsValid()))
+                .filter(VendorDocument::isValid)   // ✅ CORRECT METHOD
                 .count();
 
         double score = ((double) validCount / requiredTypes.size()) * 100.0;
