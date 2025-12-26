@@ -60,9 +60,14 @@ public class Vendor {
 
     public void addDocumentType(DocumentType type) {
         if (type == null) return;
+
         this.supportedDocumentTypes.add(type);
-        type.getVendors().add(this);
+
+        if (!type.getVendors().contains(this)) {
+            type.getVendors().add(this);
+        }
     }
+
 
     /* ===== getters & setters ===== */
 
