@@ -1,12 +1,3 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.exception.ValidationException;
-import com.example.demo.model.User;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -20,12 +11,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User registerUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User registerUser(RegisterRequest request) {
 
-        if (user.getRole() == null) {
-            user.setRole("USER");
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new ValidationException("Email already exists"); // ✅ REQUIRED
         }
+
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.USER);
 
         return userRepository.save(user);
     }
@@ -33,12 +28,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ValidationException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found")); // ✅ REQUIRED
     }
 
     @Override
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ValidationException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found")); // ✅ REQUIRED
     }
 }
