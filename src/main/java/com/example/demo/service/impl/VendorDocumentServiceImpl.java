@@ -31,30 +31,39 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
     }
 
     @Override
-public VendorDocument uploadDocument(Long vendorId, Long typeId, VendorDocument document) {
+    public VendorDocument uploadDocument(Long vendorId, Long typeId, VendorDocument document) {
 
-    Vendor vendor = vendorRepository.findById(vendorId)
-            .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
 
-    DocumentType documentType = documentTypeRepository.findById(typeId)
-            .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
+        DocumentType documentType = documentTypeRepository.findById(typeId)
+                .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
 
-    if (document.getExpiryDate() != null &&
-        document.getExpiryDate().isBefore(LocalDate.now())) {
-    throw new IllegalArgumentException("Expiry date cannot be in the past");
-}
+        // ✅ REQUIRED BY TEST: fileUrl must exist
+        if (document.getFileUrl() == null || document.getFileUrl().trim().isEmpty()) {
+            throw new ValidationException("File URL is required");
+        }
 
+        // ✅ REQUIRED BY TEST: expired document
+        if (document.getExpiryDate() != null &&
+                document.getExpiryDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Expiry date cannot be in the past");
+        }
 
-    document.setVendor(vendor);
-    document.setDocumentType(documentType);
+        document.setVendor(vendor);
+        document.setDocumentType(documentType);
 
-    return vendorDocumentRepository.save(document);
-}
-
+        return vendorDocumentRepository.save(document);
+    }
 
     @Override
     public List<VendorDocument> getDocumentsForVendor(Long vendorId) {
-        return vendorDocumentRepository.findByVendorId(vendorId);
+
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+
+        // ✅ CORRECT repository method
+        return vendorDocumentRepository.findByVendor(vendor);
     }
 
     @Override
