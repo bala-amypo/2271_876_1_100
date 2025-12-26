@@ -31,30 +31,25 @@ public class VendorDocumentServiceImpl implements VendorDocumentService {
     }
 
     @Override
-    public VendorDocument uploadDocument(Long vendorId, Long typeId, VendorDocument document) {
+public VendorDocument uploadDocument(Long vendorId, Long typeId, VendorDocument document) {
 
-        Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+    Vendor vendor = vendorRepository.findById(vendorId)
+            .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
 
-        DocumentType documentType = documentTypeRepository.findById(typeId)
-                .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
+    DocumentType documentType = documentTypeRepository.findById(typeId)
+            .orElseThrow(() -> new ResourceNotFoundException("DocumentType not found"));
 
-        // ✅ REQUIRED BY TEST: File URL must exist
-        if (document.getFileUrl() == null || document.getFileUrl().trim().isEmpty()) {
-            throw new ValidationException("File URL is required");
-        }
-
-        // ✅ REQUIRED BY TEST: Expired document must throw ValidationException
-        if (document.getExpiryDate() != null &&
-                document.getExpiryDate().isBefore(LocalDate.now())) {
-            throw new ValidationException("Document is expired");
-        }
-
-        document.setVendor(vendor);
-        document.setDocumentType(documentType);
-
-        return vendorDocumentRepository.save(document);
+    if (document.getExpiryDate() != null &&
+            document.getExpiryDate().isBefore(LocalDate.now())) {
+        throw new ValidationException("Document is expired");
     }
+
+    document.setVendor(vendor);
+    document.setDocumentType(documentType);
+
+    return vendorDocumentRepository.save(document);
+}
+
 
     @Override
     public List<VendorDocument> getDocumentsForVendor(Long vendorId) {
