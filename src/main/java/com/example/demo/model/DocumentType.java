@@ -3,7 +3,6 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -69,20 +68,4 @@ public class DocumentType {
 
     public Set<Vendor> getVendors() { return vendors; }
     public void setVendors(Set<Vendor> vendors) { this.vendors = vendors; }
-
-    /* ===== CRITICAL FOR TEST GENERICS ===== */
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DocumentType)) return false;
-        DocumentType that = (DocumentType) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
 }
