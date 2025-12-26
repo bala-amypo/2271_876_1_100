@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.exception.ValidationException;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
@@ -23,12 +22,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
 
+        // ✅ TEST EXPECTS IllegalArgumentException + exact message
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new ValidationException("Email already exists");
+            throw new IllegalArgumentException("Email already used");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        // Role is STRING, not enum
         if (user.getRole() == null) {
             user.setRole("USER");
         }
