@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -11,6 +13,8 @@ public class DocumentType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -23,9 +27,13 @@ public class DocumentType {
     @Column(nullable = false)
     private Integer weight;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
     @ManyToMany(mappedBy = "supportedDocumentTypes")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<Vendor> vendors = new HashSet<>();
 
     public DocumentType() {}
@@ -37,8 +45,6 @@ public class DocumentType {
         this.weight = weight;
     }
 
-    /* ===== REQUIRED BY TESTS ===== */
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -48,7 +54,6 @@ public class DocumentType {
         this.createdAt = LocalDateTime.now();
     }
 
-    /* ===== getters & setters ===== */
 
     public Long getId() { return id; }
 

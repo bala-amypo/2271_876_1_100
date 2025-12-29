@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -9,22 +11,31 @@ public class ComplianceScore {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "vendor_id")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Vendor vendor;
 
     @Column(nullable = false)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double scoreValue;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String rating;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime lastEvaluated;
 
     public ComplianceScore() {}
 
-    /* ===== REQUIRED BY TESTS ===== */
     @PrePersist
     protected void prePersist() {
         if (this.scoreValue == null) {
@@ -33,7 +44,6 @@ public class ComplianceScore {
         this.lastEvaluated = LocalDateTime.now();
     }
 
-    /* ===== getters & setters ===== */
 
     public Long getId() {
         return id;
