@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,36 +13,49 @@ public class VendorDocument {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "vendor_id")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Vendor vendor;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "document_type_id")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private DocumentType documentType;
 
     @Column(nullable = false)
     private String fileUrl;
 
     @Column(nullable = false, updatable = false)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime uploadedAt;
 
     private LocalDate expiryDate;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Boolean isValid;
 
     public VendorDocument() {}
 
-    public VendorDocument(Vendor vendor, DocumentType documentType, String fileUrl, LocalDate expiryDate) {
+    public VendorDocument(
+            Vendor vendor,
+            DocumentType documentType,
+            String fileUrl,
+            LocalDate expiryDate) {
         this.vendor = vendor;
         this.documentType = documentType;
         this.fileUrl = fileUrl;
         this.expiryDate = expiryDate;
     }
 
-    /* ===== REQUIRED BY TESTS ===== */
 
     public void setId(Long id) {
         this.id = id;
@@ -81,7 +96,6 @@ public class VendorDocument {
         }
     }
 
-    /* ===== getters ===== */
 
     public Long getId() { return id; }
     public Vendor getVendor() { return vendor; }
@@ -91,7 +105,6 @@ public class VendorDocument {
     public LocalDate getExpiryDate() { return expiryDate; }
     public Boolean getIsValid() { return isValid; }
 
-    /* ===== CRITICAL FOR TEST GENERICS ===== */
 
     @Override
     public boolean equals(Object o) {

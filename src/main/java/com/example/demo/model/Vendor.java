@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -11,6 +13,8 @@ public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @Column(name = "vendor_name", nullable = false, unique = true)
@@ -26,6 +30,8 @@ public class Vendor {
     private String industry;
 
     @Column(nullable = false, updatable = false)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
     @ManyToMany
@@ -34,6 +40,8 @@ public class Vendor {
         joinColumns = @JoinColumn(name = "vendor_id"),
         inverseJoinColumns = @JoinColumn(name = "document_type_id")
     )
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Set<DocumentType> supportedDocumentTypes = new HashSet<>();
 
     public Vendor() {}
@@ -45,8 +53,6 @@ public class Vendor {
         this.industry = industry;
     }
 
-    /* ===== REQUIRED BY TESTS ===== */
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -55,8 +61,6 @@ public class Vendor {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
-
-    /* ===== BUSINESS METHODS ===== */
 
     public void addDocumentType(DocumentType type) {
         if (type == null) return;
@@ -68,8 +72,6 @@ public class Vendor {
         }
     }
 
-
-    /* ===== getters & setters ===== */
 
     public Long getId() {
         return id;
