@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -9,6 +11,8 @@ public class ComplianceRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @Column(unique = true)
@@ -20,9 +24,12 @@ public class ComplianceRule {
 
     private Double threshold;
 
-    /* ===== REQUIRED BY TESTS ===== */
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double score;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
     public ComplianceRule() {}
@@ -46,7 +53,6 @@ public class ComplianceRule {
         }
     }
 
-    /* ===== getters & setters ===== */
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
