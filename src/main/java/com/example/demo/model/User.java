@@ -26,10 +26,12 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    // Accept in request, never expose in response
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    // System controlled role
     @Column(nullable = false)
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -59,23 +61,49 @@ public class User {
 
     /* ===== getters & setters ===== */
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getFullName() { return fullName; }
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    // ✅ REQUIRED BY TESTS
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getFullName() {
+        return fullName;
+    }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-    public String getRole() { return role; }
+    public String getEmail() {
+        return email;
+    }
 
-    // ✅ REQUIRED for service logic & tests
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    // ✅ REQUIRED BY SERVICE & TESTS
     public void setRole(String role) {
         this.role = role;
     }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 }
